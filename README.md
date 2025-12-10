@@ -1,4 +1,4 @@
-# [Nome do Jogo] - A Origem dos Guardiões (Fan Game)
+# Guardiões: O CInverno das Sombras
 
 Projeto desenvolvido para a disciplina de Introdução à Programação do período de 2025-2.
 Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
