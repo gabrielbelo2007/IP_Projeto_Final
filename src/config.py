@@ -1,5 +1,5 @@
 # --- Configurações Gerais ---
-TITLE = "Jack's Nightmare"
+TITLE = "Guardiões: O CInverno das Sombras"
 WIDTH = 1280  # Largura da tela
 HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
@@ -25,20 +25,20 @@ LAYER_UI = 3
 
 
 # ==========================================
-# CONFIGURAÇÕES DO JOGADOR (Área do P3)
+# CONFIGURAÇÕES DO JOGADOR (Área de Eduardo)
 # ==========================================
-# P3, escreva suas variáveis aqui embaixo...
-
-
-
-# ==========================================
-# CONFIGURAÇÕES DE INIMIGOS (Área do P2)
-# ==========================================
-# P2, escreva suas variáveis aqui embaixo...
+# escreva suas variáveis aqui embaixo...
 
 
 
 # ==========================================
-# CONFIGURAÇÕES DE UI E ITENS (Área do P4 e Designers)
+# CONFIGURAÇÕES DE INIMIGOS (Área de Luiz)
 # ==========================================
-# P4, escreva suas variáveis aqui embaixo...
+# escreva suas variáveis aqui embaixo...
+
+
+
+# ==========================================
+# CONFIGURAÇÕES DE UI E ITENS (Área de Cirilo e Jéssica)
+# ==========================================
+# escreva suas variáveis aqui embaixo...
