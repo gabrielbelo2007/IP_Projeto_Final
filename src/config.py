@@ -3,6 +3,8 @@ TITLE = "Guardiões: O CInverno das Sombras"
 WIDTH = 1280  # Largura da tela
 HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
+TIMER = 480 # Tempo minímo para liberar o boss
+INIMIGOS_INICIAS = 5
 
 # --- Cores (Padrão RGB) ---
 WHITE = (255, 255, 255)
