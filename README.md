@@ -57,8 +57,8 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
     ├── __init__.py     # Arquivo vazio (necessário para importar pastas)
     ├── config.py       # (Antigo settings.py) As "Leis": Tamanho tela, Cores, FPS
     │
-    ├── game_manager.py # Loop principal, Spawner, Timer, Controle de Estados
-    ├── menu.py         # Telas: Menu Inicial, Pause e Game Over
+    ├── game_manager.py # Loop principal, Spawner, Timer, Controle de Estados (Pause e Game Over)
+    ├── menu.py         # Telas: Menu Inicial
     ├── ui.py           # HUD: Desenha vida, pontuação e tempo DURANTE o jogo
     │
     ├── player.py       # Classe do Jack (Movimento, Inputs)
