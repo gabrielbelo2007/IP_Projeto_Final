@@ -3,6 +3,8 @@ TITLE = "Guardiões: O CInverno das Sombras"
 WIDTH = 1280  # Largura da tela
 HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
+TIMER = 480
+INIMIGOS_LIMITE = 5
 
 # --- Cores (Padrão RGB) ---
 WHITE = (255, 255, 255)
@@ -41,4 +43,10 @@ LAYER_UI = 3
 # ==========================================
 # CONFIGURAÇÕES DE UI E ITENS (Área de Cirilo e Jéssica)
 # ==========================================
-# escreva suas variáveis aqui embaixo...
+
+BTN_JOGAR = 'jogar_btn.png'
+HOVER_JOGAR = 'hover_jogar.png'
+BTN_SAIR = 'sair_btn.png'
+HOVER_SAIR = 'hover_sair.png'
+LOGO_MENU = 'logo_menu.png'
+FONTE = 'Arial'
