@@ -1,8 +1,2 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Virtual env
-.venv/
+**/__pycache__/
+**/*.pyc

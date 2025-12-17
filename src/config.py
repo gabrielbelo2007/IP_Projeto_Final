@@ -1,8 +1,11 @@
 # --- Configurações Gerais ---
-TITLE = "Jack's Nightmare"
+TITLE = "Guardiões: O CInverno das Sombras"
 WIDTH = 1280  # Largura da tela
 HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
+TIMER = 480 # Tempo minímo para liberar o boss
+INIMIGOS_LIMITE = 5
+AUMENTO_DIFICULDADE = 60000
 
 # --- Cores (Padrão RGB) ---
 WHITE = (255, 255, 255)

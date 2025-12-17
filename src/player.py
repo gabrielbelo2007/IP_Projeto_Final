@@ -5,6 +5,7 @@ from .projectile import Projectile
 
 #classe do jack
 class Player(pygame.sprite.Sprite):
+    
     def __init__(self,pos,all_sprites_group,projectile_group):
         #inicializa o sprite e ja coloca no grupo de tudo
         super().__init__(all_sprites_group)
@@ -39,9 +40,9 @@ class Player(pygame.sprite.Sprite):
         self.health = config.PLAYER_MAX_HEALTH
 
         #invencibilidade (i frame)
-        self.invincible = False
-        self.invincible_time = config.PLAYER_INVINCIBILITY_TIME
-        self.last_hit_time = 0
+        # self.invincible = False
+        # self.invincible_time = config.PLAYER_INVINCIBILITY_TIME
+        # self.last_hit_time = 0
 
         #cooldown do tiro
         self.shoot_cooldown = config.SHOOT_COOLDOWN
@@ -130,8 +131,8 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
 
         #se ainda esta invencivel dentro do tempo, ignora o dano
-        if self.invincible and now - self.last_hit_time < self.invincible_time:
-            return
+        #if self.invincible and now - self.last_hit_time < self.invincible_time:
+        #    return
 
         #tira vida
         self.health -= amount
@@ -139,22 +140,22 @@ class Player(pygame.sprite.Sprite):
             self.health = 0
 
         #ativa modo invencivel e guarda o momento do hit
-        self.invincible = True
-        self.last_hit_time = now
+        # self.invincible = True
+        #self.last_hit_time = now
 
     #atualiza o tempo de invencibilidade
-    def update_invincibility(self):
-        if self.invincible:
-            now = pygame.time.get_ticks()
-            if now - self.last_hit_time >= self.invincible_time:
-                self.invincible = False
+    #def update_invincibility(self):
+    #   if self.invincible:
+    #        now = pygame.time.get_ticks()
+    #        if now - self.last_hit_time >= self.invincible_time:
+    #           self.invincible = False
 
     #funcao chamada todo frame pelo grupo de sprites
     def update(self):
         self.handle_input()
         self.move()
         self.look_at_mouse()
-        self.update_invincibility()
+        #self.update_invincibility()
 
 
 #bloco de teste: permite rodar so o player.py
