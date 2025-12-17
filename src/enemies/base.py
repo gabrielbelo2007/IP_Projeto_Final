@@ -23,7 +23,7 @@ class EnemyStats:
     attack_cooldown: float
 
 
-class EnemyBase:
+class EnemyBase(pygame.sprite.Sprite):
     # Inimigo base: detecta, persegue e ataca
 
     STATE_IDLE = "IDLE"
@@ -32,6 +32,9 @@ class EnemyBase:
     STATE_DEAD = "DEAD"
 
     def __init__(self, pos: pygame.Vector2, stats: EnemyStats, radius: int = 14):
+        
+        super().__init__()
+        
         self.pos = pygame.Vector2(pos)
         self.stats = stats
         self.radius = radius
@@ -44,6 +47,11 @@ class EnemyBase:
 
         # Cooldown do ataque
         self.attack_cooldown_timer = 0.0
+        
+        self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (220, 220, 220), (radius, radius), radius)
+        self.rect = self.image.get_rect(center=(int(pos.x), int(pos.y)))
+        
 
     @property
     def alive(self) -> bool:
@@ -62,6 +70,7 @@ class EnemyBase:
     def die(self) -> None:
         # Marca como morto (ponto oficial de morte)
         self.state = self.STATE_DEAD
+        self.kill()
         self.on_death()
 
     def on_death(self) -> None:
@@ -94,72 +103,39 @@ class EnemyBase:
         # Ataque base MVP: dano direto se player tiver take_damage()
         if hasattr(player, "take_damage"):
             player.take_damage(self.stats.damage)
+            
+    def update_visuals(self):
+ 
+        self.rect.center = (int(self.pos.x), int(self.pos.y))
+        
+        color = (120, 120, 120)
+        if self.state == self.STATE_CHASE:
+            color = (220, 50, 50) # Vermelho perseguindo
+        elif self.state == self.STATE_ATTACK:
+            color = (255, 0, 0) # Vermelho vivo atacando
 
-    def update(
-        self,
-        dt: float,
-        player,
-        walls: list[pygame.Rect] | None = None,
-    ) -> None:
-        # Atualiza IA e timers
+    def update(self, dt: float, player, walls: list[pygame.Rect] | None = None) -> None:
         if not self.alive:
             return
 
         self.attack_cooldown_timer = max(0.0, self.attack_cooldown_timer - dt)
-
-        player_pos = pygame.Vector2(player.pos)
+        player_pos = pygame.Vector2(player.rect.center) # Pega posição do player
         distance_to_player = self.distance_to(player_pos)
 
-        # Fora do aggro: idle
         if distance_to_player > self.stats.aggro_range:
             self.state = self.STATE_IDLE
-            return
-
-        # No alcance: ataca
-        if self.can_attack(distance_to_player):
+        elif self.can_attack(distance_to_player):
             self.state = self.STATE_ATTACK
             self.attack(player)
             self.attack_cooldown_timer = self.stats.attack_cooldown
-            return
-
-        # Caso contrário: persegue
-        self.state = self.STATE_CHASE
-        self.move_towards(player_pos, dt, walls=walls)
-
-    def draw(self, screen: pygame.Surface) -> None:
-        # Visual placeholder por estado
-        if not self.alive:
-            return
-
-        if self.state == self.STATE_IDLE:
-            color = (120, 120, 120)
-        elif self.state == self.STATE_CHASE:
-            color = (220, 220, 220)
         else:
-            color = (255, 180, 180)
+            self.state = self.STATE_CHASE
+            self.move_towards(player_pos, dt, walls=walls)
+            
+        self.update_visuals()
 
-        pygame.draw.circle(
-            screen,
-            color,
-            (int(self.pos.x), int(self.pos.y)),
-            self.radius,
-        )
-
-    def get_rect(self) -> pygame.Rect:
-        # Hitbox simples do inimigo
-        return pygame.Rect(
-            int(self.pos.x - self.radius),
-            int(self.pos.y - self.radius),
-            self.radius * 2,
-            self.radius * 2,
-        )
-
-    def _move_with_collision(
-        self,
-        velocity: pygame.Vector2,
-        dt: float,
-        walls: list[pygame.Rect],
-    ) -> None:
+    def _move_with_collision(self, velocity: pygame.Vector2, dt: float, walls: list[pygame.Rect]) -> None:
+        
         # Move em X e resolve colisão
         self.pos.x += velocity.x * dt
         rect = self.get_rect()

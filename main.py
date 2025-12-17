@@ -34,25 +34,32 @@ class Main:
             self.running = False     
             
     
-    def game_loop(self):
+    def game_loop(self, dt):
         
-        in_game = self.game_manager.update()
+        in_game = self.game_manager.update(dt)
         
-        if not in_game:
+        if in_game == "MENU":
             self.state = 'menu'
+            self.game_manager.reset()
+            
+        elif in_game == "QUIT":
+            self.running = False
 
 
     def run_screen(self):
         
         while self.running:
+            
+            dt = self.clock.tick(self.fps) / 1000
+            
             if self.state == "menu":
                 self.menu_loop()
 
             elif self.state == "game":
-                self.game_loop()
+                self.game_loop(dt)
                 
             pygame.display.flip()
-            self.clock.tick(self.fps)
+            
                 
 
 if __name__ == "__main__":

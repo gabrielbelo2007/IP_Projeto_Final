@@ -1,4 +1,5 @@
 import pygame
+import os
 
 from .base import EnemyBase, EnemyStats, direction_to
 
@@ -23,6 +24,8 @@ class SpiritEnemy(EnemyBase):
             ),
             radius=14,
         )
+        
+        img_path = os.path.join("assets", "images", "")
 
 
 class RangedKnightEnemy(EnemyBase):
