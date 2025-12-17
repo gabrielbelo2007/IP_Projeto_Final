@@ -27,10 +27,12 @@ class Main:
         while self.running:
             if self.state == "menu":
                 self.menu_loop()
-                
+
             elif self.state == "game":
                 self.game_loop()
-    
+                
+
+    """
     def menu_loop(self):
         
         command = self.menu.update()
@@ -40,6 +42,7 @@ class Main:
             
         elif command == "QUIT":
             self.running = False
+    """      
             
     
     def game_loop(self):
@@ -52,6 +55,10 @@ class Main:
 
 if __name__ == "__main__":
     main = Main()
-    main.run()
-    pygame.quit() # Esse aqui desliga a "engine" - pygame.init()
-    sys.exit()  # Esse fecha a janela (e todos os processos relacionados)
+    main.run_screen()
+    
+    # Esse aqui desliga a "engine" - pygame.init()
+    pygame.quit()
+    
+    # Esse fecha a janela (e todos os processos relacionados)
+    sys.exit()

@@ -13,17 +13,17 @@ class GameManager:
         self.score = 0
 
         self.last_increment = pygame.time.get_ticks()
-        self.increment_dificult = 120000 # 2 min em milisegundos
+        self.increment_dificult = 120000 # 2 min
 
         self.tempo_boss = cfg.TIMER
-        self.spawn_count = cfg.INIMIGOS_INICIAS
+        self.spawn_count = cfg.INIMIGOS_LIMITE
                 
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         
         # self.jogador = Jack()  # Construção do objeto jogador (img e caixa de colisão)
-        self.all_sprites.add(self.jogador)
+        # self.all_sprites.add(self.jogador)
         
         # Controles do menu de pausa
         # self.pause_options = ["Continuar", "Sair para o Menu"]
@@ -89,7 +89,7 @@ class GameManager:
 
         hits_enemies = pygame.sprite.groupcollid(self.player, self.enemies, False)
 
-        if hits_enemies: # Adicionar invencibilidade?
+        if hits_enemies:
 
             self.player.health -= 1
             
