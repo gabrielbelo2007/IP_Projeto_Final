@@ -5,6 +5,7 @@ HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
 TIMER = 480 # Tempo minímo para liberar o boss
 INIMIGOS_LIMITE = 5
+AUMENTO_DIFICULDADE = 120000
 
 # --- Cores (Padrão RGB) ---
 WHITE = (255, 255, 255)

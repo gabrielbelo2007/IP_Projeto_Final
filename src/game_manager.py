@@ -1,6 +1,7 @@
 import sys
 import pygame
 from . import config as cfg
+from src.enemies import common as enemys
 
 class GameManager:
     
@@ -8,12 +9,12 @@ class GameManager:
         
         self.screen = screen
         self.paused = False
-        self.running = True
+        self.game_over = False
         
         self.score = 0
 
         self.last_increment = pygame.time.get_ticks()
-        self.increment_dificult = 120000 # 2 min
+        self.increment_dificult = cfg.AUMENTO_DIFICULDADE # 2 min
 
         self.tempo_boss = cfg.TIMER
         self.spawn_count = cfg.INIMIGOS_LIMITE
@@ -26,8 +27,8 @@ class GameManager:
         # self.all_sprites.add(self.jogador)
         
         # Controles do menu de pausa
-        # self.pause_options = ["Continuar", "Sair para o Menu"]
-        # self.pause_index = 0
+        self.pause_options = ["Continuar", "Sair para o Menu"]
+        self.pause_index = 0
     
     
     # "Desenha" na tela os objetos de inimigos, jogador...
@@ -63,7 +64,7 @@ class GameManager:
                     self.paused = False 
                 
                 elif self.pause_index == 1:
-                    self.running = False
+                    return "QUIT"
 
                 # Adicionar botão para silenciar músicas, e outro para silecias sfx        
 
@@ -94,7 +95,7 @@ class GameManager:
             self.player.health -= 1
             
             if self.player.health <= 0:
-                self.running = False
+                return "QUIT"
 
 
     def spawn_inimigos(self):
@@ -102,9 +103,9 @@ class GameManager:
         if len(self.enemies) < self.spawn_count:
 
             # Construção do inimigo
-            # enemy = Enemy()  
-            # self.all_sprites.add(enemy)
-            # self.enemies.add(enemy)
+            #enemy = Enemy()  
+            #self.all_sprites.add(enemy)
+            #self.enemies.add(enemy)
             pass
 
 
@@ -126,9 +127,31 @@ class GameManager:
             self.spawn_count += 2
             self.increment_dificult = time_now
 
+    
+    def game_over_screen(self):
+        
+        overlay = pygame.Surface(self.screen.get_width(), self.screen.get_height())
+
 
     # Atualiza os frames do jogo
     def update(self):
+        
+        for event in pygame.event.get():
+            
+            # Esse event é o de clicar no botão de fechar a janela do jogo (envia para o main.py)
+            if event.type == pygame.QUIT:
+                return "QUIT"
+            
+            if event.type == pygame.KEYDOWN:
+                
+                if not self.game_over:
+                    
+                    if event.key == pygame.K_SPACE:
+                        self.shoot()
+                    
+                    if event.key == pygame.K_ESCAPE:
+                        self.paused = True
+
         
         # Fora do menu de pause interno
         if not self.paused:
@@ -141,29 +164,6 @@ class GameManager:
         # Jogo no pause interno
         else:
             self.update_pause_menu()
-
-
-    def run_loop(self):
-        
-        for event in pygame.event.get():
             
-            # Esse event é o de clicar no botão de fechar a janela do jogo (não é tão indicado)
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            
-            if not self.paused:
-                # Esse é avaliado toda vez que uma tecla é apertada
-                if event.type == pygame.KEYDOWN:
-                    
-                    if event.key == pygame.K_SPACE:
-                        self.shoot()
-                    
-                    if event.key == pygame.K_ESCAPE:
-                        self.paused = True
-
         self.update()
         self.draw()
-        
-        if not self.running:
-            return "back_menu"

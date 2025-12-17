@@ -21,7 +21,27 @@ class Main:
         
         # Escolha da tela atual (começa no menu)
         self.state = "menu"
+
     
+    def menu_loop(self):
+        
+        command = self.menu.update()
+        
+        if command == "START_GAME":
+            self.state = "game"
+            
+        elif command == "QUIT":
+            self.running = False     
+            
+    
+    def game_loop(self):
+        
+        in_game = self.game_manager.update()
+        
+        if not in_game:
+            self.state = 'menu'
+
+
     def run_screen(self):
         
         while self.running:
@@ -31,27 +51,9 @@ class Main:
             elif self.state == "game":
                 self.game_loop()
                 
-
-    """
-    def menu_loop(self):
-        
-        command = self.menu.update()
-        
-        if command == "START_GAME":
-            self.state = "game"
-            
-        elif command == "QUIT":
-            self.running = False
-    """      
-            
-    
-    def game_loop(self):
-        
-        in_game = self.game_manager.update()
-        
-        if not in_game:
-            self.state = 'menu'
-    
+            pygame.display.flip()
+            self.clock.tick(self.fps)
+                
 
 if __name__ == "__main__":
     main = Main()
