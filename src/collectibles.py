@@ -1,7 +1,8 @@
 import pygame
 import math # efeito de flutuar uso do seno
+import random
 
-# pedir pra criar um items_group() = pygame.sprite.Group() e adicionar os itens
+drop_chance_heart_random = 0.1 # 10% de chance de dropar coração dos mobs
 
 # pensar em como fazer para que eles spawnem(talvez em algum tempo determinado)
 class Tooth(pygame.sprite.Sprite):
@@ -42,6 +43,7 @@ class Heart(pygame.sprite.Sprite):
         try:
             original_image = pygame.image.load('../assets/images/items/coracao.jpeg').convert_alpha() #convert_alpha() deixa a imagem transaprente
             self.image = pygame.transform.scale(original_image, (32, 32))
+
         except FileNotFoundError:
             self.image = pygame.Surface((32, 32))
             self.image.fill((255, 0, 0)) # Vermelho se não achar imagem
@@ -68,6 +70,7 @@ class Cage(pygame.sprite.Sprite):
         try:
             original_image = pygame.image.load('../assets/images/items/cage.png').convert_alpha()
             self.image = pygame.transform.scale(original_image, (48, 48)) # A gaiola tem um tamanho maior que os coletáveis, porque faz sentido
+
         except FileNotFoundError:
             # Se não carregar a gaiola, gera uma imagem cinzenta pra representa a gaiola com um x pra parecer fechada
             self.image = pygame.Surface((48, 48))
@@ -84,6 +87,38 @@ class Cage(pygame.sprite.Sprite):
 
     def take_damage(self): # função de dano tomado da cage
         if self.health <= 0:
-            self.kill() # Remove a gaiola de todos os grupos de sprites
-            return True # Retorna True para avisar o jogo que a gaiola foi destruída
+            self.kill()
+            return True # Retorna True para avisar que a gaiola foi destruída
         return False
+    
+# funções de spawn
+
+#spawn do coração
+def try_spawn_heart(x, y, group): # x = pos_x do mob / y = pos_y do mob / group = items_group(heart)
+    chance = random.random() # 0 a 1.0
+
+    if chance < drop_chance_heart_random:
+        new_heart = Heart(x, y)
+        group.add(new_heart)
+        return True
+    return False
+
+def spawn_tooth(x, y, group): #
+    new_tooth = Tooth(x, y)
+    group.add(new_tooth)
+
+
+def spawn_random_cage(screen_width, screen_height, group): # largura e altura da tela e items_group()
+
+    min_x = 100 # margem mínima (px)
+    min_y = 100 # margem mínima (px)
+    max_x = screen_width - 100
+    max_y = screen_height - 100
+
+    #Disposição aleatória de nasciemnto da cage
+    
+    x = random.randint(min_x, max_x)
+    y = random.randint(min_y, max_y)
+
+    new_cage = Cage(x,y)
+    group.add(new_cage)
