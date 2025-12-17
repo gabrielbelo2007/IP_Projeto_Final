@@ -13,6 +13,12 @@ class MainMenu:
         #carrega as imagens
         diretorio_imagens = os.path.join(os.getcwd(), 'assets\images\itens_menu')
 
+        #background
+        self.img_fundo = pygame.image.load(os.path.join(diretorio_imagens, config.BACKGROUND_MENU)).convert()
+
+        self.img_fundo = pygame.transform.scale(self.img_fundo, (config.WIDTH, config.HEIGHT))
+        self.fundo_rect = self.img_fundo.get_rect()
+
         #botão jogar
         self.img_jogar = pygame.image.load(os.path.join(diretorio_imagens, config.BTN_JOGAR)).convert_alpha()
         self.img_jogar_hover = pygame.image.load(os.path.join(diretorio_imagens, config.HOVER_JOGAR)).convert_alpha()
@@ -53,7 +59,9 @@ class MainMenu:
                             esperando = False
                             return 'QUIT'
             
+            #desenhar
             self.screen.fill(config.BLACK) #limpar a tela
+            self.screen.blit(self.img_fundo, (0, 0)) #adiciona o background em cima do fundo preto
             self.screen.blit(self.logo, self.logo_rect) #desenha a logo
 
             #lógica de hover

@@ -44,9 +44,12 @@ LAYER_UI = 3
 # CONFIGURAÇÕES DE UI E ITENS (Área de Cirilo e Jéssica)
 # ==========================================
 
-BTN_JOGAR = 'jogar_btn.png'
+BTN_JOGAR = 'botao_jogar.png'
 HOVER_JOGAR = 'hover_jogar.png'
-BTN_SAIR = 'sair_btn.png'
+
+BTN_SAIR = 'botao_sair.png'
 HOVER_SAIR = 'hover_sair.png'
+
+BACKGROUND_MENU = 'background_menu.png'
+
 LOGO_MENU = 'logo_menu.png'
-FONTE = 'Arial'
