@@ -6,7 +6,6 @@ class MainMenu:
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.fonte = pygame.font.match_font(config.FONTE)
         self.carregar_arquivos()
 
     def carregar_arquivos(self):
@@ -24,20 +23,20 @@ class MainMenu:
         self.img_jogar_hover = pygame.image.load(os.path.join(diretorio_imagens, config.HOVER_JOGAR)).convert_alpha()
 
         self.btn_jogar_rect = self.img_jogar.get_rect()
-        self.btn_jogar_rect.center = (config.WIDTH / 2, 250)
+        self.btn_jogar_rect.center = (config.WIDTH / 2, 380)
 
         #botão sair
         self.img_sair = pygame.image.load(os.path.join(diretorio_imagens, config.BTN_SAIR)).convert_alpha()
         self.img_sair_hover = pygame.image.load(os.path.join(diretorio_imagens, config.HOVER_SAIR)).convert_alpha()
 
         self.btn_sair_rect = self.img_sair.get_rect()
-        self.btn_sair_rect.center = (config.WIDTH / 2, 350)
+        self.btn_sair_rect.center = (config.WIDTH / 2, 460)
 
         #logo
         self.logo = pygame.image.load(os.path.join(diretorio_imagens, config.LOGO_MENU)).convert_alpha()
-        self.logo_rect = self.logo.get_rect(center=(config.WIDTH / 2, 100))
+        self.logo_rect = self.logo.get_rect(center=(config.WIDTH / 2, 240))
 
-    def mostrar_tela_start(self):
+    def UPDATE(self):
         #loop do menu
         esperando = True
         while esperando:
