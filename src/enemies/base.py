@@ -5,16 +5,16 @@ import pygame
 
 
 def direction_to(origin: pygame.Vector2, target: pygame.Vector2) -> pygame.Vector2:
-    # Direção normalizada de origin -> target (ou zero)
+    # Direção normalizada origin -> target
     delta = target - origin
     if delta.length_squared() == 0:
-        return pygame.Vector2(0, 0)
+        return pygame.Vector2()
     return delta.normalize()
 
 
-@dataclass(frozen=True)
+@dataclass
 class EnemyStats:
-    # Stats compartilhados por todos os inimigos
+    # Stats compartilhados
     max_health: int
     damage: int
     move_speed: float
@@ -23,8 +23,8 @@ class EnemyStats:
     attack_cooldown: float
 
 
-class EnemyBase(pygame.sprite.Sprite):
-    # Inimigo base: detecta, persegue e ataca
+class EnemyBase:
+    # Base: detecta, persegue e ataca
 
     STATE_IDLE = "IDLE"
     STATE_CHASE = "CHASE"
@@ -39,13 +39,8 @@ class EnemyBase(pygame.sprite.Sprite):
         self.stats = stats
         self.radius = radius
 
-        # Vida atual começa cheia
         self.health = stats.max_health
-
-        # Estado inicial
         self.state = self.STATE_IDLE
-
-        # Cooldown do ataque
         self.attack_cooldown_timer = 0.0
         
         self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
@@ -55,11 +50,11 @@ class EnemyBase(pygame.sprite.Sprite):
 
     @property
     def alive(self) -> bool:
-        # Vivo enquanto não estiver DEAD
+        # Vivo enquanto não for DEAD
         return self.state != self.STATE_DEAD
 
     def take_damage(self, amount: int) -> None:
-        # Aplica dano e morre ao chegar em 0
+        # Aplica dano e verifica morte
         if not self.alive:
             return
 
@@ -68,13 +63,13 @@ class EnemyBase(pygame.sprite.Sprite):
             self.die()
 
     def die(self) -> None:
-        # Marca como morto (ponto oficial de morte)
+        # Ponto oficial de morte
         self.state = self.STATE_DEAD
         self.kill()
         self.on_death()
 
     def on_death(self) -> None:
-        # Hook para integrar drop/efeitos depois (não implementa nada aqui)
+        # Hook para drops/efeitos (outro time)
         pass
 
     def distance_to(self, position: pygame.Vector2) -> float:
@@ -82,7 +77,7 @@ class EnemyBase(pygame.sprite.Sprite):
         return (position - self.pos).length()
 
     def can_attack(self, distance_to_player: float) -> bool:
-        # Pode atacar se está no alcance e sem cooldown
+        # Range + cooldown
         return (
             distance_to_player <= self.stats.attack_range
             and self.attack_cooldown_timer <= 0.0
@@ -94,27 +89,23 @@ class EnemyBase(pygame.sprite.Sprite):
         dt: float,
         walls: list[pygame.Rect] | None = None,
     ) -> None:
-        # Movimento com colisão opcional
+        # Move com colisão opcional
         direction = direction_to(self.pos, target_pos)
         velocity = direction * self.stats.move_speed
         self._move_with_collision(velocity, dt, walls or [])
 
     def attack(self, player) -> None:
-        # Ataque base MVP: dano direto se player tiver take_damage()
+        # Ataque base: dano direto
         if hasattr(player, "take_damage"):
             player.take_damage(self.stats.damage)
-            
-    def update_visuals(self):
- 
-        self.rect.center = (int(self.pos.x), int(self.pos.y))
-        
-        color = (120, 120, 120)
-        if self.state == self.STATE_CHASE:
-            color = (220, 50, 50) # Vermelho perseguindo
-        elif self.state == self.STATE_ATTACK:
-            color = (255, 0, 0) # Vermelho vivo atacando
 
-    def update(self, dt: float, player, walls: list[pygame.Rect] | None = None) -> None:
+    def update(
+        self,
+        dt: float,
+        player,
+        walls: list[pygame.Rect] | None = None,
+    ) -> None:
+        # IA simples: idle/chase/attack
         if not self.alive:
             return
 
@@ -124,22 +115,53 @@ class EnemyBase(pygame.sprite.Sprite):
 
         if distance_to_player > self.stats.aggro_range:
             self.state = self.STATE_IDLE
-        elif self.can_attack(distance_to_player):
+            return
+
+        if self.can_attack(distance_to_player):
             self.state = self.STATE_ATTACK
             self.attack(player)
             self.attack_cooldown_timer = self.stats.attack_cooldown
+            return
+
+        self.state = self.STATE_CHASE
+        self.move_towards(player_pos, dt, walls=walls)
+
+    def draw(self, screen: pygame.Surface) -> None:
+        # Placeholder visual
+        if not self.alive:
+            return
+
+        if self.state == self.STATE_IDLE:
+            color = (120, 120, 120)
+        elif self.state == self.STATE_CHASE:
+            color = (220, 220, 220)
         else:
             self.state = self.STATE_CHASE
             self.move_towards(player_pos, dt, walls=walls)
             
         self.update_visuals()
 
-    def _move_with_collision(self, velocity: pygame.Vector2, dt: float, walls: list[pygame.Rect]) -> None:
-        
-        # Move em X e resolve colisão
+        pygame.draw.circle(screen, color, (int(self.pos.x), int(self.pos.y)), self.radius)
+
+    def get_rect(self) -> pygame.Rect:
+        # Hitbox simples
+        return pygame.Rect(
+            int(self.pos.x - self.radius),
+            int(self.pos.y - self.radius),
+            self.radius * 2,
+            self.radius * 2,
+        )
+
+    def _move_with_collision(
+        self,
+        velocity: pygame.Vector2,
+        dt: float,
+        walls: list[pygame.Rect],
+    ) -> None:
+        # Resolve colisão por eixo (slide simples)
+
         self.pos.x += velocity.x * dt
         rect = self.get_rect()
-
         for wall in walls:
             if rect.colliderect(wall):
                 if velocity.x > 0:
@@ -148,10 +170,8 @@ class EnemyBase(pygame.sprite.Sprite):
                     self.pos.x = wall.right + self.radius
                 rect = self.get_rect()
 
-        # Move em Y e resolve colisão
         self.pos.y += velocity.y * dt
         rect = self.get_rect()
-
         for wall in walls:
             if rect.colliderect(wall):
                 if velocity.y > 0:
