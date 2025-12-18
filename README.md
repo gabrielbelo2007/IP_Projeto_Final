@@ -4,8 +4,8 @@ Projeto desenvolvido para a disciplina de Introdução à Programação do perí
 Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 
 ## 🎮 Como Jogar
-- **WASD / Setas**: Movimentação do Jack Frost.
-- **Mouse / Espaço**: Disparar raios de gelo.
+- **WASD**: Movimentação do Jack Frost.
+- **Mouse**: Disparar raios de gelo.
 - **Objetivo**: Sobreviva aos pesadelos, salve as crianças nas gaiolas para coletar os Dentes e derrote o Breu.
 
 ## 🛠️ Instalação
