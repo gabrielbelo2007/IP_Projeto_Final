@@ -44,7 +44,7 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 ├── requirements.txt    # Dependências (pygame)
 ├── main.py             # Ponto de entrada (Inicializa o Pygame e chama GameManager)
 │
-├── assets/             # MÍDIA (Designers D1 e D2 enchem isso aqui)
+├── assets/             # MÍDIA
 │   ├── images/
 │   │   ├── characters/ # Sprites do Jack, Inimigos e Boss
 │   │   ├── items/      # Sprites de Coração, Cristal, Dente, Gaiola, Projéteis
@@ -53,12 +53,12 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 │   ├── sounds/         # SFX (tiro.wav, dano.wav) e Música de fundo
 │   └── fonts/          # Fontes .ttf
 │
-└── src/                # LÓGICA (Programadores e Designers-Dev)
+└── src/                
     ├── __init__.py     # Arquivo vazio (necessário para importar pastas)
-    ├── config.py       # (Antigo settings.py) As "Leis": Tamanho tela, Cores, FPS
+    ├── config.py       # As "Leis": Tamanho tela, Cores, FPS
     │
-    ├── game_manager.py # Loop principal, Spawner, Timer, Controle de Estados
-    ├── menu.py         # Telas: Menu Inicial, Pause e Game Over
+    ├── game_manager.py # Loop principal, Spawner, Timer, Controle de Estados (Pause e Game Over)
+    ├── menu.py         # Telas: Menu Inicial
     ├── ui.py           # HUD: Desenha vida, pontuação e tempo DURANTE o jogo
     │
     ├── player.py       # Classe do Jack (Movimento, Inputs)
@@ -70,7 +70,7 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
     │   ├── common.py   # Classes Filhas (Espírito, Cavalo)
     │   └── boss.py     # Classe Filha Especial (O Breu)
     │
-    └── collectibles.py # (Antigo items.py) Classes: Gaiola, Dente, Coração, Cristal
+    └── collectibles.py # Classes: Gaiola, Dente, Coração, Cristal
 ```
 
 ## ✅ Divisão de Tarefas
