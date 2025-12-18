@@ -2,7 +2,8 @@ import pygame
 import math # efeito de flutuar uso do seno
 import random
 
-drop_chance_heart_random = 0.1 # 10% de chance de dropar coração dos mobs
+
+drop_chance_heart_random = 0.3 # 10% de chance de dropar coração dos mobs
 
 # pensar em como fazer para que eles spawnem(talvez em algum tempo determinado)
 class Tooth(pygame.sprite.Sprite):
@@ -91,15 +92,54 @@ class Cage(pygame.sprite.Sprite):
             return True # Retorna True para avisar que a gaiola foi destruída
         return False
     
+class Ice():
+    def __init__(self, x, y):
+        super().__init__()
+        
+        try:
+            original_image = pygame.image.load('../assets/images/items/floco_neve.jpeg').convert_alpha()
+            self.image = pygame.transform.scale(original_image, (32, 32)) 
+
+        except FileNotFoundError:
+            print("ERRO: Imagem do floco de neve não encontrada.")
+            self.image = pygame.Surface((32, 32))
+            self.image.fill((255, 255, 255)) # uma imagem em branco
+
+        
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        
+        # Buff na move_speed
+        self.boost_multiplier = 1.2 # multiplicador da velocidade * 1.2
+        self.duration = 15000 # 15 segundos de duração o efeito
+        
+        # Para animação de flutuar
+        self.y_start = y
+        self.timer = 0
+
+    def update(self):
+        # Efeito de flutuar (Senoide)
+        self.timer += 0.1
+        offset = math.sin(self.timer) * 5  
+        self.rect.centery = self.y_start + offset
+
 # funções de spawn
 
 #spawn do coração
 def try_spawn_heart(x, y, group): # x = pos_x do mob / y = pos_y do mob / group = items_group(heart)
     chance = random.random() # 0 a 1.0
 
-    if chance < drop_chance_heart_random:
+    if chance < drop_chance_heart_random: # drop_chance_heart_random 0.3
         new_heart = Heart(x, y)
         group.add(new_heart)
+        return True
+    return False
+
+def ice_spawn(x, y, group): # x = pos_x do mob / y = pos_y do mob / group = items_group(heart)
+    chance = random.random() # 0 a 1.0
+    if chance > 0.3 and chance <= 0.5: 
+        new_snowflake = Ice(x, y)
+        group.add(new_snowflake)
         return True
     return False
 
