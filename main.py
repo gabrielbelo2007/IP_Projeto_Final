@@ -22,7 +22,6 @@ class Main:
         # Escolha da tela atual (começa no menu)
         self.state = "menu"
 
-    
     def menu_loop(self):
         
         command = self.menu.update()

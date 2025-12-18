@@ -46,12 +46,10 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 │
 ├── assets/             # MÍDIA
 │   ├── images/
-│   │   ├── characters/ # Sprites do Jack, Inimigos e Boss
-│   │   ├── items/      # Sprites de Coração, Cristal, Dente, Gaiola, Projéteis
-│   │   ├── ui/         # Botões, Logo, Ícones de HUD
-│   │   └── background/ # O mapa único (chão de gelo/neve)
-│   ├── sounds/         # SFX (tiro.wav, dano.wav) e Música de fundo
-│   └── fonts/          # Fontes .ttf
+│   │   ├── characters/ # Sprites do Jack, Inimigos e Boss, Projéteis
+│   │   ├── itens/      # Sprites de Coração, Cristal, Dente, Gaiola 
+│   │   └── itens_menu/ # Botões, Logo, Ícones de HUD, mapa
+│   └── sounds/         # SFX (tiro.wav, dano.wav) e Música de fundo
 │
 └── src/                
     ├── __init__.py     # Arquivo vazio (necessário para importar pastas)

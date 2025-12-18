@@ -2,12 +2,12 @@ import pygame
 import math # efeito de flutuar uso do seno
 import random
 
-DROP_CHANCE_HEART = 0.15
-DROP_CHANCE_ICE = 0.1
+DROP_CHANCE_HEART = 0.2
+DROP_CHANCE_ICE = 0.15
 
 class Collectible(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, img_path, size=(32, 32)):
+    def __init__(self, x, y, img_path, size=(42, 42)):
         super().__init__()
 
         raw_img = pygame.image.load(img_path).convert_alpha()
@@ -27,32 +27,32 @@ class Collectible(pygame.sprite.Sprite):
 # pensar em como fazer para que eles spawnem(talvez em algum tempo determinado)
 class Tooth(Collectible):
     def __init__(self, x, y):
-        super().__init__(x, y, '/home/gabrielbelo/IP_Projeto_Final/assets/images/items/dente.jpeg')
+        super().__init__(x, y, 'assets/images/itens/dentinho.png')
 
         # Pontuação do tooth
         self.score_value = 100 # player.score += tooth.score_value na main
 
 class Heart(Collectible):
     def __init__(self, x, y):
-        super().__init__(x, y, '/home/gabrielbelo/IP_Projeto_Final/assets/images/items/coracao.jpeg')
+        super().__init__(x, y, 'assets/images/itens/coracao.jpeg')
         
         self.heal_value = 20  # vida recuperada // player.hp += heart.heal_value
 
 class Ice(Collectible):
     def __init__(self, x, y):
-        super().__init__(x, y, '/home/gabrielbelo/IP_Projeto_Final/assets/images/items/floco_neve.jpeg')
+        super().__init__(x, y, 'assets/images/itens/floco_neve.jpeg')
 
         # Buff na move_speed
         self.boost_multiplier = 1.2 # multiplicador da velocidade * 1.2
-        self.duration = 15000 # 15 segundos de duração o efeito
+        self.duration = 10000 # 8 segundos de duração o efeito
         
 
 class Cage(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         
-        original_image = pygame.image.load('/home/gabrielbelo/IP_Projeto_Final/assets/images/items/jaula.jpeg').convert_alpha()
-        self.image = pygame.transform.scale(original_image, (48, 48)) # A gaiola tem um tamanho maior que os coletáveis, porque faz sentido
+        original_image = pygame.image.load('assets/images/itens/jaula.jpeg').convert_alpha()
+        self.image = pygame.transform.scale(original_image, (90, 90)) # A gaiola tem um tamanho maior que os coletáveis, porque faz sentido
 
         # Posicionamento da gaiola
         self.rect = self.image.get_rect(topleft=(x, y))

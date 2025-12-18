@@ -23,7 +23,7 @@ class SpiritEnemy(EnemyBase):
                 attack_range=MELEE_RANGE,
                 attack_cooldown=0.8,
             ),
-            radius=14,
+            radius=30,
         )
         
         raw_image = pygame.image.load("assets/images/characters/spirit.png").convert_alpha()

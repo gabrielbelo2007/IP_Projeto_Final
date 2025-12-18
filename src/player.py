@@ -13,14 +13,9 @@ class Player(pygame.sprite.Sprite):
         #guarda os grupos para poder criar tiros
         self.all_sprites = all_sprites_group
         self.projectiles = projectile_group
-
-        #cria a imagem do jack como um quadrado
-        self.image = pygame.Surface(
-            (config.PLAYER_WIDTH,config.PLAYER_HEIGHT),
-            pygame.SRCALPHA
-        )
-        #pinta o jack com a cor definida no config
-        self.image.fill(config.PLAYER_COLOR)
+        
+        img_original = pygame.image.load("assets/images/characters/jack.png").convert_alpha()
+        self.image = pygame.transform.scale(img_original, (config.PLAYER_WIDTH, config.PLAYER_HEIGHT))
 
         #guarda uma copia da imagem original para girar depois
         self.base_image = self.image.copy()
@@ -79,33 +74,49 @@ class Player(pygame.sprite.Sprite):
         if mouse_buttons[0]:
             mouse_pos = pygame.mouse.get_pos()
             self.shoot(mouse_pos)
-            
-
-    def apply_speed_boost(self, multiplier, duration_ms):
-        self.current_speed = self.base_speed * multiplier
-        self.buff_end_time = pygame.time.get_ticks() + duration_ms
-        # Efeito visual simples: Muda cor para Azul ciano
-        self.image.fill((0, 255, 255)) 
-
-
-    def update_buffs(self):
-        if pygame.time.get_ticks() > self.buff_end_time and self.current_speed != self.base_speed:
-            self.current_speed = self.base_speed
-            self.image.fill(config.PLAYER_COLOR) # Volta a cor original
-
+        
+        
     #aplica o movimento
-    def move(self):
-        #posicao anda na direcao vezes a velocidade
-        self.pos += self.direction * self.current_speed
+    def move(self, cages):
 
-        #atualiza o rect com a pos nova
-        self.rect.center = (int(self.pos.x),int(self.pos.y))
+        self.pos.x += self.direction.x * self.current_speed
+        self.rect.centerx = int(self.pos.x)
+        
+        # Checa colisão horizontal com as gaiolas
+        if cages:
+            hits = pygame.sprite.spritecollide(self, cages, False)
+            if hits:
+                wall = hits[0] 
+                
+                if self.direction.x > 0:
+                    self.rect.right = wall.rect.left
 
-        #mantem o jack dentro da tela
-        screen_rect = pygame.Rect(0,0,config.WIDTH,config.HEIGHT)
+                elif self.direction.x < 0:
+                    self.rect.left = wall.rect.right
+                
+                self.pos.x = self.rect.centerx
+
+        self.pos.y += self.direction.y * self.current_speed
+        self.rect.centery = int(self.pos.y)
+
+        if cages:
+            hits = pygame.sprite.spritecollide(self, cages, False)
+            if hits:
+                wall = hits[0]
+
+                if self.direction.y > 0:
+                    self.rect.bottom = wall.rect.top
+
+                elif self.direction.y < 0:
+                    self.rect.top = wall.rect.bottom
+                
+                self.pos.y = self.rect.centery
+
+        # Mantém dentro da tela
+        screen_rect = pygame.Rect(0, 0, config.WIDTH, config.HEIGHT)
         self.rect.clamp_ip(screen_rect)
-        #atualiza a posicao real caso tenha batido na borda
-        self.pos.update(self.rect.centerx,self.rect.centery)
+        self.pos.update(self.rect.centerx, self.rect.centery)
+        
 
     #faz o jack olhar para o mouse
     def look_at_mouse(self):
@@ -114,18 +125,17 @@ class Player(pygame.sprite.Sprite):
         direction = pygame.math.Vector2(mouse_pos) - self.pos
 
         #se o mouse estiver exatamente em cima do jack, nao faz nada
-        if direction.length() == 0:
-            return
+        if direction.length() == 0:return
 
         #calcula o angulo em graus (pygame usa y invertido)
         angle = math.degrees(math.atan2(-direction.y,direction.x))
-
-        #gira a imagem base do jack
-        self.image = pygame.transform.rotate(self.base_image,angle)
-
+       
         #recalcula o rect para manter o centro no mesmo lugar
         self.rect = self.image.get_rect(center=self.rect.center)
         
+        temp_img = self.base_image.copy()
+        if self.current_speed > self.base_speed:
+            temp_img.fill((0, 100, 100), special_flags=pygame.BLEND_ADD) 
         
 
     #cria um tiro em direcao ao alvo (mouse) respeitando o cooldown
@@ -182,62 +192,25 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image.set_alpha(255)
 
+
+    def apply_speed_boost(self, multiplier, duration_ms):
+        self.current_speed = self.base_speed * multiplier
+        self.buff_end_time = pygame.time.get_ticks() + duration_ms
+
+
+    def update_buffs(self):
+        if pygame.time.get_ticks() > self.buff_end_time and self.current_speed != self.base_speed:
+            self.current_speed = self.base_speed
+            self.image.fill(config.PLAYER_COLOR) # Volta a cor original
+
+
     #funcao chamada todo frame pelo grupo de sprites
-    def update(self):
+    def update(self, cages):
         
         if self.current_speed > self.base_speed:
-             self.image = self.base_image.copy()
-             self.image.fill((0, 255, 255))
-        else:
-             self.image = self.base_image.copy()
+            self.base_image.fill((0, 255, 255), special_flags=pygame.BLEND_MULT) 
         
         self.handle_input()
-        self.move()
+        self.move(cages)
         self.look_at_mouse()
         self.update_invincibility()
-
-
-#bloco de teste: permite rodar so o player.py
-if __name__ == "__main__":
-    print("iniciando teste do jack...")
-
-    pygame.init()
-
-    #cria a janela usando as configs do jogo
-    screen = pygame.display.set_mode((config.WIDTH,config.HEIGHT))
-    pygame.display.set_caption("teste do jack")
-
-    clock = pygame.time.Clock()
-
-    #grupos de sprites
-    all_sprites = pygame.sprite.Group()
-    bullets = pygame.sprite.Group()
-
-    #cria o jack no centro da tela
-    player = Player(
-        (config.WIDTH // 2,config.HEIGHT // 2),
-        all_sprites,
-        bullets
-    )
-    all_sprites.add(player)
-
-    running = True
-    while running:
-        #controla o fps
-        dt = clock.tick(config.FPS)
-
-        #eventos de fechar a janela
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        #atualiza todos os sprites (player + tiros)
-        all_sprites.update()
-
-        #desenha fundo e sprites
-        screen.fill(config.BLACK)
-        all_sprites.draw(screen)
-
-        pygame.display.flip()
-
-    pygame.quit()
