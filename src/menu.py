@@ -36,7 +36,7 @@ class MainMenu:
         self.logo = pygame.image.load(os.path.join(diretorio_imagens, config.LOGO_MENU)).convert_alpha()
         self.logo_rect = self.logo.get_rect(center=(config.WIDTH / 2, 240))
 
-    def UPDATE(self):
+    def update(self):
         #loop do menu
         esperando = True
         while esperando:
@@ -64,10 +64,16 @@ class MainMenu:
             self.screen.blit(self.logo, self.logo_rect) #desenha a logo
 
             #lógica de hover
-            if self.btn_jogar_rect.collidepoint(mouse_pos): #botão jogar
+            #botão jogar
+            if self.btn_jogar_rect.collidepoint(mouse_pos):
                 self.screen.blit(self.img_jogar_hover, self.btn_jogar_rect)
-
-            else: #botão sair
+            else:
                 self.screen.blit(self.img_jogar, self.btn_jogar_rect)
+
+            #botão sair
+            if self.btn_sair_rect.collidepoint(mouse_pos):
+                self.screen.blit(self.img_sair_hover, self.btn_sair_rect)
+            else:
+                self.screen.blit(self.img_sair, self.btn_sair_rect)
 
             pygame.display.flip()
