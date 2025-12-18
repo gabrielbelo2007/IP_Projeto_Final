@@ -20,7 +20,6 @@ PLAYER_SPEED = 5
 PLAYER_START_HEALTH = 100
 
 # --- Camadas (Z-Index) ---
-# Isso ajuda a desenhar coisas na ordem certa (chão embaixo, player em cima)
 LAYER_BACKGROUND = 0
 LAYER_ITEMS = 1
 LAYER_MAIN = 2 # Player e Inimigos
@@ -46,7 +45,7 @@ PLAYER_MAX_HEALTH = PLAYER_START_HEALTH  #usa o mesmo valor da vida inicial
 PLAYER_INVINCIBILITY_TIME = 1000  #1s de "i-frame"
 
 #tempo mínimo entre dois tiros (em milisegundos)
-SHOOT_COOLDOWN = 300  #0.3s entre tiros
+SHOOT_COOLDOWN = 400  #0.4s entre tiros
 
 #configurações do projétil (bola de gelo)
 PROJECTILE_SIZE = 8        #largura\altura do projétil
@@ -73,3 +72,5 @@ HOVER_SAIR = 'hover_sair.png'
 BACKGROUND_MENU = 'background_menu.png'
 
 LOGO_MENU = 'logo_menu.png'
+
+BLUE_BACKGROUND = (30, 30, 30)

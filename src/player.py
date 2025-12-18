@@ -32,7 +32,12 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(pos)
 
         #movimento
-        self.speed = config.PLAYER_SPEED
+        self.base_speed = config.PLAYER_SPEED
+        
+        #buff
+        self.current_speed = self.base_speed
+        self.buff_end_time = 0
+        
         self.direction = pygame.math.Vector2(0,0)
 
         #vida
@@ -40,9 +45,9 @@ class Player(pygame.sprite.Sprite):
         self.health = config.PLAYER_MAX_HEALTH
 
         #invencibilidade (i frame)
-        # self.invincible = False
-        # self.invincible_time = config.PLAYER_INVINCIBILITY_TIME
-        # self.last_hit_time = 0
+        self.invincible = False
+        self.invincible_time = config.PLAYER_INVINCIBILITY_TIME
+        self.last_hit_time = 0
 
         #cooldown do tiro
         self.shoot_cooldown = config.SHOOT_COOLDOWN
@@ -74,11 +79,24 @@ class Player(pygame.sprite.Sprite):
         if mouse_buttons[0]:
             mouse_pos = pygame.mouse.get_pos()
             self.shoot(mouse_pos)
+            
+
+    def apply_speed_boost(self, multiplier, duration_ms):
+        self.current_speed = self.base_speed * multiplier
+        self.buff_end_time = pygame.time.get_ticks() + duration_ms
+        # Efeito visual simples: Muda cor para Azul ciano
+        self.image.fill((0, 255, 255)) 
+
+
+    def update_buffs(self):
+        if pygame.time.get_ticks() > self.buff_end_time and self.current_speed != self.base_speed:
+            self.current_speed = self.base_speed
+            self.image.fill(config.PLAYER_COLOR) # Volta a cor original
 
     #aplica o movimento
     def move(self):
         #posicao anda na direcao vezes a velocidade
-        self.pos += self.direction * self.speed
+        self.pos += self.direction * self.current_speed
 
         #atualiza o rect com a pos nova
         self.rect.center = (int(self.pos.x),int(self.pos.y))
@@ -107,6 +125,8 @@ class Player(pygame.sprite.Sprite):
 
         #recalcula o rect para manter o centro no mesmo lugar
         self.rect = self.image.get_rect(center=self.rect.center)
+        
+        
 
     #cria um tiro em direcao ao alvo (mouse) respeitando o cooldown
     def shoot(self,target_pos):
@@ -131,8 +151,8 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
 
         #se ainda esta invencivel dentro do tempo, ignora o dano
-        #if self.invincible and now - self.last_hit_time < self.invincible_time:
-        #    return
+        if self.invincible and now - self.last_hit_time < self.invincible_time:
+          return
 
         #tira vida
         self.health -= amount
@@ -140,22 +160,41 @@ class Player(pygame.sprite.Sprite):
             self.health = 0
 
         #ativa modo invencivel e guarda o momento do hit
-        # self.invincible = True
-        #self.last_hit_time = now
+        self.invincible = True
+        self.last_hit_time = now
+        
+        # SOM DE DANO
 
     #atualiza o tempo de invencibilidade
-    #def update_invincibility(self):
-    #   if self.invincible:
-    #        now = pygame.time.get_ticks()
-    #        if now - self.last_hit_time >= self.invincible_time:
-    #           self.invincible = False
+    def update_invincibility(self):
+        
+        if self.invincible:
+            now = pygame.time.get_ticks()
+            
+            if (now // 100) % 2 == 0:
+                self.image.set_alpha(100) # Meio transparente
+            else:
+                self.image.set_alpha(255) # Normal
+            
+            if now - self.last_hit_time >= self.invincible_time:
+                self.invincible = False
+                
+        else:
+            self.image.set_alpha(255)
 
     #funcao chamada todo frame pelo grupo de sprites
     def update(self):
+        
+        if self.current_speed > self.base_speed:
+             self.image = self.base_image.copy()
+             self.image.fill((0, 255, 255))
+        else:
+             self.image = self.base_image.copy()
+        
         self.handle_input()
         self.move()
         self.look_at_mouse()
-        #self.update_invincibility()
+        self.update_invincibility()
 
 
 #bloco de teste: permite rodar so o player.py

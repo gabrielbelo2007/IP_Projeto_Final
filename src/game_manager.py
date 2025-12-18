@@ -3,6 +3,8 @@ import pygame
 from . import config as cfg
 from src.enemies.common import SpiritEnemy
 from .player import Player
+from .ui import BarraVida, Temporizador
+from .collectibles import Cage, Tooth, Heart, Ice, DROP_CHANCE_HEART, DROP_CHANCE_ICE
 
 class GameManager:
     
@@ -11,11 +13,20 @@ class GameManager:
         self.screen = screen
         self.reset()
         
+        self.font_medium = pygame.font.SysFont("Arial", 32, bold=True)
+        self.font_large = pygame.font.SysFont("Arial", 64, bold=True)
+        
     def reset(self):
         self.paused = False
         self.game_over = False
         
         self.score = 0
+        self.final_time_text = "00:00"
+
+        self.teeth_collected = 0
+        self.teeth_goal = 3
+        self.last_cage_spawn = pygame.time.get_ticks()
+        self.cage_spawn_interval = 10000 # Spawna gaiola a cada 100 seg (exemplo)
 
         self.start_time = pygame.time.get_ticks()
         
@@ -27,8 +38,14 @@ class GameManager:
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.projectiles = pygame.sprite.Group()
+        self.cages = pygame.sprite.Group()
+        self.collectibles = pygame.sprite.Group()
         
         self.player = Player((cfg.WIDTH // 2, cfg.HEIGHT // 2), self.all_sprites, self.projectiles)
+        
+        vida_inicial = self.player.health
+        self.health_bar = BarraVida(20, 20, 200, 20, vida_inicial)
+        self.timer = Temporizador(cfg.WIDTH - 20, 20)
         
         # Controles do menu de pausa
         self.pause_options = ["Continuar", "Menu Principal"]
@@ -41,8 +58,16 @@ class GameManager:
         
         self.screen.fill((0, 0, 0))
         
-        # AQUI FICA A UI TAMBÉM
+        self.health_bar.desenhar(self.screen, self.player.health)
+        self.timer.desenhar(self.screen)
         
+        # TEMPLATE - Scores
+        self.draw_text(f"Score: {self.score}", self.font_medium, 80, 60)
+        color_teeth = (255, 255, 0) if self.teeth_collected >= self.teeth_goal else (200, 200, 200)
+        self.draw_text(f"Teeth: {self.teeth_collected}/{self.teeth_goal}", self.font_medium, 80, 90, color_teeth)
+        
+        self.cages.draw(self.screen)
+        self.collectibles.draw(self.screen)
         self.all_sprites.draw(self.screen)
         
         if self.paused:
@@ -51,6 +76,12 @@ class GameManager:
         elif self.game_over:
             self.draw_gameover_overlay()
         
+    # TEMPLATE
+    def draw_text(self, text, font, x, y, color=(255, 255, 255)):
+        surf = font.render(text, True, color)
+        rect = surf.get_rect(center=(x, y))
+        self.screen.blit(surf, rect)
+    
     
     # TEMPLATE
     def draw_pause_overlay(self):
@@ -60,38 +91,30 @@ class GameManager:
         overlay.fill((0, 0, 0))
         self.screen.blit(overlay, (0,0))
         
-        self.draw_text("PAUSE", 50, cfg.WIDTH//2, cfg.HEIGHT//2 - 50)
+        self.draw_text("PAUSE", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 - 50)
         
         # Desenha as opções
         for i, option in enumerate(self.pause_options):
             color = (255, 255, 0) if i == self.pause_index else (255, 255, 255)
-            self.draw_text(option, 30, cfg.WIDTH//2, cfg.HEIGHT//2 + 20 + (i * 40), color)
+            self.draw_text(option, self.font_large, cfg.WIDTH//2, cfg.HEIGHT//2 + 20 + (i * 40), color)
         
     
     # TEMPLATE
     def draw_gameover_overlay(self):
         
-        overlay = pygame.Surface(self.screen.get_width(), self.screen.get_height())
+        overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT))
         overlay.set_alpha(200)
         overlay.fill((50, 0, 0)) # Tom avermelhado para morte
         self.screen.blit(overlay, (0,0))
 
         # Títulos e Pontos
-        self.draw_text("GAME OVER", 64, cfg.WIDTH//2, cfg.HEIGHT//4)
-        self.draw_text(f"Pontos: {self.score}", 32, cfg.WIDTH//2, cfg.HEIGHT//2 - 20)
-        self.draw_text(f"Tempo: {self.total_time}s", 32, cfg.WIDTH//2, cfg.HEIGHT//2 + 20)
+        self.draw_text("GAME OVER", self.font_large, cfg.WIDTH//2, cfg.HEIGHT//4)
+        self.draw_text(f"Pontos: {self.score}", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 - 20)
+        self.draw_text(f"Tempo Vivo: {self.final_score_text}", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 + 20)
 
         # Botão Selecionado
         cor = (255, 255, 0) # Amarelo para destaque
-        self.draw_text("> Voltar ao Menu <", 40, cfg.WIDTH//2, cfg.HEIGHT * 0.75, cor)
-    
-    
-    # TEMPLATE
-    def draw_text(self, text, size, x, y, color=(255, 255, 255)):
-        font = pygame.font.SysFont("Arial", size, bold=True)
-        surf = font.render(text, True, color)
-        rect = surf.get_rect(center=(x, y))
-        self.screen.blit(surf, rect)
+        self.draw_text("> Voltar ao Menu <", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT * 0.75, cor)
     
     
     # Lida com as ações dentro do pause interno
@@ -144,6 +167,16 @@ class GameManager:
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
+
+    def spawn_cages(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_cage_spawn > self.cage_spawn_interval and len(self.cages) < 3:
+            x = random.randint(100, cfg.WIDTH - 100)
+            y = random.randint(100, cfg.HEIGHT - 100)
+            cage = Cage(x, y)
+            self.cages.add(cage) 
+            self.last_cage_spawn = now
+    
     
     def check_collisions(self):
 
@@ -157,20 +190,52 @@ class GameManager:
         for enemy in projectiles_hits:
             enemy.take_damage(10)
 
-            if enemy.hp <= 10:
+            if enemy.health <= 10:
                 enemy.die()
+                
+            if not enemy.alive:
                 self.score += 10
+                
+                roll = random.random()
+                if roll < DROP_CHANCE_HEART:
+                    self.collectibles.add(Heart(enemy.pos.x, enemy.pos.y))
+                elif roll < DROP_CHANCE_HEART + DROP_CHANCE_ICE:
+                    self.collectibles.add(Ice(enemy.pos.x, enemy.pos.y))
 
 
         enemies_hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
 
         if enemies_hits:
 
-            self.player.health -= enemies_hits[0].stats.damage
+            damage = enemies_hits[0].stats.damage
+            self.player.take_damage(damage)
             
             if self.player.health <= 0:
                 self.game_over = True
-                self.total_time = (pygame.time.get_ticks() - self.start_ticks) // 1000
+                self.final_score_text = self.timer.texto_atual 
+        
+        
+        cage_hits = pygame.sprite.groupcollide(self.cages, self.projectiles, False, True)
+        
+        for cage in cage_hits:
+
+            if cage.take_damage(10): 
+                tooth = Tooth(cage.rect.centerx, cage.rect.centery)
+                self.collectibles.add(tooth)
+        
+        
+        items_collected = pygame.sprite.spritecollide(self.player, self.collectibles, True)
+        
+        for item in items_collected:
+            if isinstance(item, Heart):
+                self.player.health = min(self.player.health + item.heal_value, self.player.max_health)
+            
+            elif isinstance(item, Ice):
+                self.player.apply_speed_boost(item.boost_multiplier, item.duration)
+                
+            elif isinstance(item, Tooth):
+                self.score += item.score_value
+                self.teeth_collected += 1
                 
 
     def control_dificult(self):
@@ -180,7 +245,7 @@ class GameManager:
         if time_now - self.last_increment > self.increment_dificult:
 
             self.spawn_count += 2
-            self.increment_dificult = time_now
+            self.last_increment = time_now
 
 
     # Atualiza os frames do jogo
@@ -213,17 +278,17 @@ class GameManager:
                     
         if not self.paused and not self.game_over:
             
+            self.timer.atualizar()
+            
             self.control_dificult()
             self.spawn_enemies()
+            self.spawn_cages()
             
             self.player.update()
             self.enemies.update(dt, self.player, None)
             self.projectiles.update()
             
+            self.collectibles.update() 
             self.check_collisions()
-            
-        # Jogo no pause interno
-        else:
-            self.update_pause_menu()
             
         self.draw()

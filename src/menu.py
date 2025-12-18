@@ -3,15 +3,15 @@ from . import config
 import os
 
 class MainMenu:
+    
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.fonte = pygame.font.match_font(config.FONTE)
         self.carregar_arquivos()
 
     def carregar_arquivos(self):
         #carrega as imagens
-        diretorio_imagens = os.path.join(os.getcwd(), 'assets\images\itens_menu')
+        diretorio_imagens = os.path.join(os.getcwd(), 'assets/images/itens_menu')
 
         #background
         self.img_fundo = pygame.image.load(os.path.join(diretorio_imagens, config.BACKGROUND_MENU)).convert()
@@ -37,7 +37,7 @@ class MainMenu:
         self.logo = pygame.image.load(os.path.join(diretorio_imagens, config.LOGO_MENU)).convert_alpha()
         self.logo_rect = self.logo.get_rect(center=(config.WIDTH / 2, 100))
 
-    def mostrar_tela_start(self):
+    def update(self):
         #loop do menu
         esperando = True
         while esperando:
