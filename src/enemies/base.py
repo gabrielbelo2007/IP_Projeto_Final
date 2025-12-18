@@ -23,7 +23,7 @@ class EnemyStats:
     attack_cooldown: float
 
 
-class EnemyBase:
+class EnemyBase(pygame.sprite.Sprite):
     # Base: detecta, persegue e ataca
 
     STATE_IDLE = "IDLE"
@@ -83,12 +83,7 @@ class EnemyBase:
             and self.attack_cooldown_timer <= 0.0
         )
 
-    def move_towards(
-        self,
-        target_pos: pygame.Vector2,
-        dt: float,
-        walls: list[pygame.Rect] | None = None,
-    ) -> None:
+    def move_towards(self, target_pos: pygame.Vector2, dt: float, walls: list[pygame.Rect] | None = None,) -> None:
         # Move com colisão opcional
         direction = direction_to(self.pos, target_pos)
         velocity = direction * self.stats.move_speed
@@ -99,13 +94,12 @@ class EnemyBase:
         if hasattr(player, "take_damage"):
             player.take_damage(self.stats.damage)
 
-    def update(
-        self,
-        dt: float,
-        player,
-        walls: list[pygame.Rect] | None = None,
-    ) -> None:
-        # IA simples: idle/chase/attack
+    def update_visuals(self):
+        # Atualiza a posição do rect baseada na posição flutuante (Vector2)
+        self.rect.center = (int(self.pos.x), int(self.pos.y))
+        
+
+    def update(self, dt: float, player, walls: list[pygame.Rect] | None = None) -> None:
         if not self.alive:
             return
 
@@ -113,69 +107,39 @@ class EnemyBase:
         player_pos = pygame.Vector2(player.rect.center) # Pega posição do player
         distance_to_player = self.distance_to(player_pos)
 
-        if distance_to_player > self.stats.aggro_range:
-            self.state = self.STATE_IDLE
-            return
-
         if self.can_attack(distance_to_player):
             self.state = self.STATE_ATTACK
             self.attack(player)
             self.attack_cooldown_timer = self.stats.attack_cooldown
-            return
-
-        self.state = self.STATE_CHASE
-        self.move_towards(player_pos, dt, walls=walls)
-
-    def draw(self, screen: pygame.Surface) -> None:
-        # Placeholder visual
-        if not self.alive:
-            return
-
-        if self.state == self.STATE_IDLE:
-            color = (120, 120, 120)
-        elif self.state == self.STATE_CHASE:
-            color = (220, 220, 220)
         else:
             self.state = self.STATE_CHASE
             self.move_towards(player_pos, dt, walls=walls)
             
         self.update_visuals()
 
-        pygame.draw.circle(screen, color, (int(self.pos.x), int(self.pos.y)), self.radius)
-
-    def get_rect(self) -> pygame.Rect:
-        # Hitbox simples
-        return pygame.Rect(
-            int(self.pos.x - self.radius),
-            int(self.pos.y - self.radius),
-            self.radius * 2,
-            self.radius * 2,
-        )
-
-    def _move_with_collision(
-        self,
-        velocity: pygame.Vector2,
-        dt: float,
-        walls: list[pygame.Rect],
-    ) -> None:
-        # Resolve colisão por eixo (slide simples)
-
+    def _move_with_collision(self, velocity: pygame.Vector2, dt: float, walls: list[pygame.Rect]) -> None:
+        
+        # Movimento X
         self.pos.x += velocity.x * dt
-        rect = self.get_rect()
+        self.rect.centerx = int(self.pos.x) # Atualiza rect para checar colisão
+        
         for wall in walls:
-            if rect.colliderect(wall):
+            if self.rect.colliderect(wall): # Usamos self.rect direto
                 if velocity.x > 0:
                     self.pos.x = wall.left - self.radius
                 elif velocity.x < 0:
                     self.pos.x = wall.right + self.radius
-                rect = self.get_rect()
+                self.rect.centerx = int(self.pos.x)
 
+        # Movimento Y
         self.pos.y += velocity.y * dt
-        rect = self.get_rect()
+        self.rect.centery = int(self.pos.y) # Atualiza rect para checar colisão
+        
         for wall in walls:
-            if rect.colliderect(wall):
+            if self.rect.colliderect(wall):
                 if velocity.y > 0:
                     self.pos.y = wall.top - self.radius
                 elif velocity.y < 0:
                     self.pos.y = wall.bottom + self.radius
-                rect = self.get_rect()
+                self.rect.centery = int(self.pos.y)
+

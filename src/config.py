@@ -5,7 +5,7 @@ HEIGHT = 720  # Altura da tela
 FPS = 60      # Frames por segundo
 TIMER = 480 # Tempo minímo para liberar o boss
 INIMIGOS_LIMITE = 5
-AUMENTO_DIFICULDADE = 60000
+AUMENTO_DIFICULDADE = 40000
 
 # --- Cores (Padrão RGB) ---
 WHITE = (255, 255, 255)
@@ -20,7 +20,6 @@ PLAYER_SPEED = 5
 PLAYER_START_HEALTH = 100
 
 # --- Camadas (Z-Index) ---
-# Isso ajuda a desenhar coisas na ordem certa (chão embaixo, player em cima)
 LAYER_BACKGROUND = 0
 LAYER_ITEMS = 1
 LAYER_MAIN = 2 # Player e Inimigos
@@ -33,8 +32,8 @@ LAYER_UI = 3
 # P3, escreva suas variáveis aqui embaixo...
 
 #tamanho do jack na tela (quadrado de 40x40 pixels)
-PLAYER_WIDTH = 40        #largura do jack em pixels
-PLAYER_HEIGHT = 40       #altura do jack em pixels
+PLAYER_WIDTH = 70        #largura do jack em pixels
+PLAYER_HEIGHT = 70       #altura do jack em pixels
 
 #cor usada para desenhar o jack na tela
 PLAYER_COLOR = CYAN      #reaproveita a cor CYAN
@@ -46,10 +45,10 @@ PLAYER_MAX_HEALTH = PLAYER_START_HEALTH  #usa o mesmo valor da vida inicial
 PLAYER_INVINCIBILITY_TIME = 1000  #1s de "i-frame"
 
 #tempo mínimo entre dois tiros (em milisegundos)
-SHOOT_COOLDOWN = 300  #0.3s entre tiros
+SHOOT_COOLDOWN = 400  #0.4s entre tiros
 
 #configurações do projétil (bola de gelo)
-PROJECTILE_SIZE = 8        #largura\altura do projétil
+PROJECTILE_SIZE = 10        #largura\altura do projétil
 PROJECTILE_SPEED = 15      #velocidade do projétil
 PROJECTILE_COLOR = (180, 230, 255)   #cor dor tiro (azul claro)
 
@@ -73,3 +72,5 @@ HOVER_SAIR = 'hover_sair.png'
 BACKGROUND_MENU = 'background_menu.png'
 
 LOGO_MENU = 'logo_menu.png'
+
+BLUE_BACKGROUND = (30, 30, 30)

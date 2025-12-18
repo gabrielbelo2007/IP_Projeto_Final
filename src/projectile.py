@@ -7,14 +7,9 @@ class Projectile(pygame.sprite.Sprite):
         #inicializa a classe sprite do pygame
         super().__init__()
 
-        #cria a imagem do projetil (quadrado pequeno)
-        self.image = pygame.Surface(
-            (config.PROJECTILE_SIZE,config.PROJECTILE_SIZE),
-            pygame.SRCALPHA
-        )
-        #pinta a bolinha com a cor da config
-        self.image.fill(config.PROJECTILE_COLOR)
-
+        img_raw = pygame.image.load('assets/images/characters/jack_projectile.png').convert_alpha()
+        self.image = pygame.transform.scale(img_raw, (30, 30))
+        
         #rect controla posicao e colisao do projetil
         #comeca com o centro na posicao inicial (jack)
         self.rect = self.image.get_rect(center=start_pos)
