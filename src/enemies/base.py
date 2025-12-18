@@ -32,6 +32,9 @@ class EnemyBase:
     STATE_DEAD = "DEAD"
 
     def __init__(self, pos: pygame.Vector2, stats: EnemyStats, radius: int = 14):
+        
+        super().__init__()
+        
         self.pos = pygame.Vector2(pos)
         self.stats = stats
         self.radius = radius
@@ -39,6 +42,11 @@ class EnemyBase:
         self.health = stats.max_health
         self.state = self.STATE_IDLE
         self.attack_cooldown_timer = 0.0
+        
+        self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (220, 220, 220), (radius, radius), radius)
+        self.rect = self.image.get_rect(center=(int(pos.x), int(pos.y)))
+        
 
     @property
     def alive(self) -> bool:
@@ -57,6 +65,7 @@ class EnemyBase:
     def die(self) -> None:
         # Ponto oficial de morte
         self.state = self.STATE_DEAD
+        self.kill()
         self.on_death()
 
     def on_death(self) -> None:
@@ -101,8 +110,7 @@ class EnemyBase:
             return
 
         self.attack_cooldown_timer = max(0.0, self.attack_cooldown_timer - dt)
-
-        player_pos = pygame.Vector2(player.pos)
+        player_pos = pygame.Vector2(player.rect.center) # Pega posição do player
         distance_to_player = self.distance_to(player_pos)
 
         if distance_to_player > self.stats.aggro_range:
@@ -128,7 +136,10 @@ class EnemyBase:
         elif self.state == self.STATE_CHASE:
             color = (220, 220, 220)
         else:
-            color = (255, 180, 180)
+            self.state = self.STATE_CHASE
+            self.move_towards(player_pos, dt, walls=walls)
+            
+        self.update_visuals()
 
         pygame.draw.circle(screen, color, (int(self.pos.x), int(self.pos.y)), self.radius)
 
