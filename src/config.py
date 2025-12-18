@@ -63,4 +63,13 @@ PROJECTILE_COLOR = (180, 230, 255)   #cor dor tiro (azul claro)
 # ==========================================
 # CONFIGURAÇÕES DE UI E ITENS (Área do P4 e Designers)
 # ==========================================
-# P4, escreva suas variáveis aqui embaixo...
+
+BTN_JOGAR = 'botao_jogar.png'
+HOVER_JOGAR = 'hover_jogar.png'
+
+BTN_SAIR = 'botao_sair.png'
+HOVER_SAIR = 'hover_sair.png'
+
+BACKGROUND_MENU = 'background_menu.png'
+
+LOGO_MENU = 'logo_menu.png'
