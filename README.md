@@ -12,7 +12,7 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/usuario/nome-do-jogo.git
+   git clone [https://github.com/usuario/nome-do-jogo.git](https://github.com/gabrielbelo2007/IP_Projeto_Final)
    ```
 
 2. Instale as dependências:
