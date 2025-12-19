@@ -65,12 +65,18 @@ PROJECTILE_COLOR = (180, 230, 255)   #cor dor tiro (azul claro)
 
 BTN_JOGAR = 'botao_jogar.png'
 HOVER_JOGAR = 'hover_jogar.png'
-
 BTN_SAIR = 'botao_sair.png'
 HOVER_SAIR = 'hover_sair.png'
-
 BACKGROUND_MENU = 'background_menu.png'
-
 LOGO_MENU = 'logo_menu.png'
 
 BLUE_BACKGROUND = (30, 30, 30)
+
+BACKGROUND_PAUSE = 'background_pausa.png'
+BTN_CONTINUAR = 'continuar_jogando.png'
+HOVER_CONTINUAR = 'hover_continuar.png'
+BTN_VOLTAR = 'voltar_menu.png'
+HOVER_VOLTAR = 'hover_voltar.png'
+
+GAMEOVER = 'game_over.png'
+VITORIA = 'vitoria.png'
