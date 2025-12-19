@@ -6,6 +6,7 @@ from .player import Player
 from .ui import BarraVida, Temporizador, ContadorDentes, ContadorEstrela 
 from .collectibles import Cage, Tooth, Heart, Ice, DROP_CHANCE_HEART, DROP_CHANCE_ICE
 from src.enemies.boss import BossBreu, BossProjectile
+import os
 
 class GameManager:
     
@@ -62,7 +63,6 @@ class GameManager:
         self.gameover_options = ["Menu Principal"] 
         self.pause_index = 0
     
-    
     # "Desenha" na tela os objetos de inimigos, jogador...
     def draw(self):
         
@@ -99,47 +99,111 @@ class GameManager:
     
     # TEMPLATE
     def draw_pause_overlay(self):
+
+        diretorio_imagens = os.path.join(os.getcwd(), 'assets/images/itens_menu')
     
-        overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT))
-        overlay.set_alpha(128) 
-        overlay.fill((0, 0, 0))
-        self.screen.blit(overlay, (0,0))
+        #background
+        self.background = pygame.image.load(os.path.join(diretorio_imagens, cfg.BACKGROUND_PAUSE)).convert_alpha()
+        self.background = pygame.transform.scale(self.background, (cfg.WIDTH, cfg.HEIGHT))
+
+        #botão continuar
+        self.img_continuar = pygame.image.load(os.path.join(diretorio_imagens, cfg.BTN_CONTINUAR)).convert_alpha()
+        self.img_continuar_hover = pygame.image.load(os.path.join(diretorio_imagens, cfg.HOVER_CONTINUAR)).convert_alpha()
+
+        self.btn_continuar_rect = self.img_continuar.get_rect()
+        self.btn_continuar_rect.center = (cfg.WIDTH / 2, 287)
+
+        #botão voltar
+        self.img_voltar = pygame.image.load(os.path.join(diretorio_imagens, cfg.BTN_VOLTAR)).convert_alpha()
+        self.img_voltar_hover = pygame.image.load(os.path.join(diretorio_imagens, cfg.HOVER_VOLTAR)).convert_alpha()
+
+        self.btn_voltar_rect = self.img_voltar.get_rect()
+        self.btn_voltar_rect.center = (cfg.WIDTH / 2, 369)
+
+        #desenhar fundo da tela
+        self.screen.blit(self.background, (0, 0))
         
-        self.draw_text("PAUSE", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 - 50)
+        #Botão continuar
+        if self.pause_index == 0:
+            img_btn_continuar = self.img_continuar_hover
+        else:
+            img_btn_continuar = self.img_continuar
         
-        # Desenha as opções
-        for i, option in enumerate(self.pause_options):
-            color = (255, 255, 0) if i == self.pause_index else (255, 255, 255)
-            self.draw_text(option, self.font_large, cfg.WIDTH//2, cfg.HEIGHT//2 + 20 + (i * 40), color)
+        #botão voltar
+        if self.pause_index == 1:
+            img_btn_voltar = self.img_voltar_hover
+        else:
+            img_btn_voltar = self.img_voltar
+
+        #desenho final
+        self.screen.blit(img_btn_continuar, self.btn_continuar_rect)
+        self.screen.blit(img_btn_voltar, self.btn_voltar_rect)
         
-    
-    # TEMPLATE
     def draw_gameover_overlay(self):
-        
+        #carregar arquivos de imagem
+        diretorio_imagens = os.path.join(os.getcwd(), 'assets/images/itens_menu')
+
+        #botão voltar
+        self.img_voltar = pygame.image.load(os.path.join(diretorio_imagens, cfg.BTN_VOLTAR)).convert_alpha()
+        self.img_voltar_hover = pygame.image.load(os.path.join(diretorio_imagens, cfg.HOVER_VOLTAR)).convert_alpha()
+
+        self.btn_voltar_rect = self.img_voltar.get_rect()
+        self.btn_voltar_rect.center = (cfg.WIDTH / 2, cfg.HEIGHT * 0.75)
+
+        #título
+        self.img_gameover = pygame.image.load(os.path.join(diretorio_imagens, cfg.GAMEOVER)).convert_alpha()
+        self.gameover_rect = self.img_gameover.get_rect(center=(cfg.WIDTH / 2, cfg.HEIGHT / 4))
+
+        #Fundo Avermelhado
         overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT))
         overlay.set_alpha(200)
-        overlay.fill((50, 0, 0)) # Tom avermelhado para morte
+        overlay.fill((50, 0, 0)) 
         self.screen.blit(overlay, (0,0))
 
-        # Títulos e Pontos
-        self.draw_text("GAME OVER", self.font_large, cfg.WIDTH//2, cfg.HEIGHT//4)
+        #desenho título
+        self.screen.blit(self.img_gameover, self.gameover_rect)
+
+        #textos Informativos
         self.draw_text(f"Pontos: {self.score}", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 - 20)
         self.draw_text(f"Tempo Vivo: {self.final_score_text}", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2 + 20)
 
-        # Botão Selecionado
-        cor = (255, 255, 0) # Amarelo para destaque
-        self.draw_text("> Voltar ao Menu <", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT * 0.75, cor)
-    
-    
-    # TEMPLATE
+        #Botão "Voltar"
+        img_botao = self.img_voltar_hover 
+        rect_botao = self.btn_voltar_rect
+        
+        self.screen.blit(img_botao, rect_botao)
+
     def draw_victory_overlay(self):
+        #carregar arquivos de imagem
+        diretorio_imagens = os.path.join(os.getcwd(), 'assets/images/itens_menu')
+
+        #botão voltar
+        self.img_voltar = pygame.image.load(os.path.join(diretorio_imagens, cfg.BTN_VOLTAR)).convert_alpha()
+        self.img_voltar_hover = pygame.image.load(os.path.join(diretorio_imagens, cfg.HOVER_VOLTAR)).convert_alpha()
+
+        self.btn_voltar_rect = self.img_voltar.get_rect()
+        self.btn_voltar_rect.center = (cfg.WIDTH / 2, cfg.HEIGHT * 0.75)
+
+        #título
+        self.img_vitoria = pygame.image.load(os.path.join(diretorio_imagens, cfg.VITORIA)).convert_alpha()
+        self.vitoria_rect = self.img_gameover.get_rect(center=(cfg.WIDTH / 2, cfg.HEIGHT / 4))
+
+        #Fundo Verde
         overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT))
         overlay.set_alpha(200)
-        overlay.fill((0, 50, 0)) # Verde escuro
+        overlay.fill((0, 50, 0)) 
         self.screen.blit(overlay, (0,0))
-        self.draw_text("VICTORY!", self.font_large, cfg.WIDTH//2, cfg.HEIGHT//4)
-        self.draw_text(f"Boss Defeated!", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2)
-        self.draw_text("> Voltar ao Menu <", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT * 0.75, (255,255,0))
+        
+        #Textos Informativos
+        self.draw_text(f"Breu Derrotado!", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2)
+        
+        #Botão "Voltar"
+        #Reutilizando a mesma lógica do Game Over
+        img_botao = self.img_voltar_hover 
+        
+        rect_botao = self.btn_voltar_rect 
+        
+        self.screen.blit(img_botao, rect_botao)
     
     
     # Lida com as ações dentro do pause interno
