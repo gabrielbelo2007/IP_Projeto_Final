@@ -48,9 +48,8 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 │   ├── images/
 │   │   ├── characters/ # Sprites do Jack, Inimigos e Boss, Projéteis
 │   │   ├── itens/      # Sprites de Coração, Cristal, Dente, Gaiola 
-│   │   └── itens_menu/ # Botões, Logo, Ícones de HUD, mapa
-│   └── sounds/         # SFX (tiro.wav, dano.wav) e Música de fundo
-│
+│   └── └── itens_menu/ # Botões, Logo, Ícones de HUD, mapa
+│   
 └── src/                
     ├── __init__.py     # Arquivo vazio (necessário para importar pastas)
     ├── config.py       # As "Leis": Tamanho tela, Cores, FPS
@@ -84,8 +83,34 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 
 ## 📈 Desafios & Lições
 
-Nada ainda!
+- Um dos principais desafios foi a adaptação às ferramentas e conceitos utilizados no projeto, especialmente o Pygame e a estruturação em Programação Orientada a Objetos, exigindo maior cuidado com modularização e integração entre classes.​
+
+- Também enfrentamos dificuldades na organização do desenvolvimento em equipe com Git/GitHub, utilizando branches e integrando alterações simultâneas, o que demandou coordenação e atenção em merges.​
+
+- Além disso, o projeto foi desenvolvido em um prazo curto, já que esse final de período foi bem corrido com as demais disciplinas.​
 
 ## 🕹️ Capturas de Tela
 
-Nada ainda!
+### Menu Principal
+
+![menu_principal](screens\menu_principal.png)
+
+### Pause Interno
+
+![pause_intero](screens\pause_interno.png)
+
+### Inimigos comuns
+
+![inimigos](screens\inimigos_comuns.png)
+
+### Boss
+
+![boss](screens\boss.png)
+
+### Game Over
+
+![game_over](screens\game_over.png)
+
+### Game Win
+
+![win](screens\win.png)

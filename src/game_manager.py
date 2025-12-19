@@ -184,16 +184,21 @@ class GameManager:
         self.btn_voltar_rect = self.img_voltar.get_rect()
         self.btn_voltar_rect.center = (cfg.WIDTH / 2, cfg.HEIGHT * 0.75)
 
-        #título
-        self.img_vitoria = pygame.image.load(os.path.join(diretorio_imagens, cfg.VITORIA)).convert_alpha()
-        self.vitoria_rect = self.img_gameover.get_rect(center=(cfg.WIDTH / 2, cfg.HEIGHT / 4))
-
         #Fundo Verde
         overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT))
         overlay.set_alpha(200)
         overlay.fill((0, 50, 0)) 
         self.screen.blit(overlay, (0,0))
         
+        #título
+        self.img_win = pygame.image.load(os.path.join(diretorio_imagens, cfg.VITORIA)).convert_alpha()
+        self.gameover_rect = self.img_win.get_rect(center=(cfg.WIDTH / 2, cfg.HEIGHT / 4))
+        
+        self.screen.blit(self.img_win, self.gameover_rect)
+        
+        self.img_vitoria = pygame.image.load(os.path.join(diretorio_imagens, cfg.VITORIA)).convert_alpha()
+        self.vitoria_rect = self.img_win.get_rect(center=(cfg.WIDTH / 2, cfg.HEIGHT / 4))
+
         #Textos Informativos
         self.draw_text(f"Breu Derrotado!", self.font_medium, cfg.WIDTH//2, cfg.HEIGHT//2)
         
