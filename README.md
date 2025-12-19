@@ -93,24 +93,24 @@ Um jogo Roguelike top-down shooter desenvolvido em Python com PyGame.
 
 ### Menu Principal
 
-![menu_principal](screens\menu_principal.png)
+![menu_principal](screens/menu_principal.png)
 
 ### Pause Interno
 
-![pause_intero](screens\pause_interno.png)
+![pause_intero](screens/pause_interno.png)
 
 ### Inimigos comuns
 
-![inimigos](screens\inimigos_comuns.png)
+![inimigos](screens/inimigos_comuns.png)
 
 ### Boss
 
-![boss](screens\boss.png)
+![boss](screens/boss.png)
 
 ### Game Over
 
-![game_over](screens\game_over.png)
+![game_over](screens/game_over.png)
 
 ### Game Win
 
-![win](screens\win.png)
+![win](screens/win.png)
